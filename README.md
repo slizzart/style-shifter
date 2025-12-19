@@ -2,6 +2,10 @@
 
 A lean, powerful TypeScript library for dynamic CSS theming with expression-based style overrides.
 
+## 🚀 [**Live Interactive Demo**](demo.html)
+
+Experience StyleShifter in action! Switch between 6 different themes and see real-time CSS transformations.
+
 ## Features
 
 - 🎨 **Dynamic Theming**: Apply and switch themes at runtime

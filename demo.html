@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StyleShifter - Interactive Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #f5f5f5;
+    }
+
+    /* Navigation */
+    .nav {
+      /*![demo.navBackground]*/
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      
+      color: white;
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      /*![toPx(demo.logoSize)]*/
+      font-size: 24px;
+      
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo::before {
+      content: '🎨';
+      font-size: 1.5em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .nav-links a:hover {
+      /*![opacify(demo.navBackground, 0.8)]*/
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Hero Section */
+    .hero {
+      /*![demo.heroBackground]*/
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      
+      color: white;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .hero h1 {
+      /*![toPx(demo.heroTitleSize)]*/
+      font-size: 48px;
+      
+      margin-bottom: 1rem;
+      font-weight: 800;
+    }
+
+    .hero p {
+      /*![toPx(demo.heroTextSize)]*/
+      font-size: 20px;
+      
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      opacity: 0.95;
+    }
+
+    /* Theme Switcher */
+    .theme-switcher {
+      /*![demo.switcherBackground]*/
+      background: white;
+      
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin: 2rem auto;
+      max-width: 1200px;
+    }
+
+    .theme-switcher h2 {
+      /*![demo.headingColor]*/
+      color: #2d3748;
+      
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .theme-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .theme-btn {
+      /*![demo.buttonBackground]*/
+      background: #667eea;
+      
+      /*![demo.buttonText]*/
+      color: white;
+      
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .theme-btn:hover {
+      /*![opacify(demo.buttonBackground, 0.8)]*/
+      background: rgba(102, 126, 234, 0.8);
+      
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .theme-btn.active {
+      /*![demo.accentColor]*/
+      background: #48bb78;
+      
+      box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.2);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    /* Demo Sections */
+    .demo-section {
+      /*![demo.cardBackground]*/
+      background: white;
+      
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .demo-section h2 {
+      /*![demo.headingColor]*/
+      color: #2d3748;
+      
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .demo-section h3 {
+      /*![demo.subheadingColor]*/
+      color: #4a5568;
+      
+      /*![toPx(demo.subheadingSize)]*/
+      font-size: 20px;
+      
+      margin: 1.5rem 0 1rem;
+    }
+
+    .demo-section p {
+      /*![demo.textColor]*/
+      color: #718096;
+      
+      /*![toPx(demo.textSize)]*/
+      font-size: 16px;
+      
+      margin-bottom: 1rem;
+    }
+
+    /* Code Block */
+    .code-block {
+      /*![demo.codeBackground]*/
+      background: #1a202c;
+      
+      /*![demo.codeText]*/
+      color: #e2e8f0;
+      
+      padding: 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 1rem 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* Grid Layout */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .demo-card {
+      /*![demo.demoCardBackground]*/
+      background: #f7fafc;
+      
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .demo-card:hover {
+      /*![demo.accentColor]*/
+      border-color: #667eea;
+      
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+    }
+
+    .demo-card h4 {
+      /*![demo.cardHeadingColor]*/
+      color: #2d3748;
+      
+      margin-bottom: 0.5rem;
+    }
+
+    .demo-card p {
+      /*![demo.cardTextColor]*/
+      color: #718096;
+      
+      font-size: 0.9rem;
+    }
+
+    /* Buttons Demo */
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      /*![demo.primaryButton]*/
+      background: #667eea;
+      
+      /*![demo.primaryButtonText]*/
+      color: white;
+    }
+
+    .btn-primary:hover {
+      /*![tint(demo.primaryButton, #000000, 0.1)]*/
+      background: #5a67d8;
+    }
+
+    .btn-secondary {
+      /*![demo.secondaryButton]*/
+      background: #48bb78;
+      
+      /*![demo.secondaryButtonText]*/
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      /*![tint(demo.secondaryButton, #000000, 0.1)]*/
+      background: #38a169;
+    }
+
+    .btn-outline {
+      /*![demo.cardBackground]*/
+      background: transparent;
+      
+      /*![printf(2px solid %1, demo.primaryButton)]*/
+      border: 2px solid #667eea;
+      
+      /*![demo.primaryButton]*/
+      color: #667eea;
+    }
+
+    .btn-outline:hover {
+      /*![demo.primaryButton]*/
+      background: #667eea;
+      
+      color: white;
+    }
+
+    /* Color Palette Demo */
+    .color-palette {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .color-swatch {
+      text-align: center;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .color-swatch-color {
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .swatch-primary { 
+      /*![demo.primaryButton]*/
+      background: #667eea; 
+    }
+    .swatch-secondary { 
+      /*![demo.secondaryButton]*/
+      background: #48bb78; 
+    }
+    .swatch-accent { 
+      /*![demo.accentColor]*/
+      background: #ed8936; 
+    }
+    .swatch-danger { 
+      /*![demo.dangerColor]*/
+      background: #f56565; 
+    }
+
+    .color-swatch-label {
+      /*![demo.cardBackground]*/
+      background: white;
+      
+      padding: 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      /*![demo.textColor]*/
+      color: #718096;
+    }
+
+    /* Typography Demo */
+    .typography-demo h1 {
+      /*![demo.headingColor]*/
+      color: #2d3748;
+      
+      /*![toPx(demo.h1Size)]*/
+      font-size: 36px;
+      
+      margin-bottom: 0.5rem;
+    }
+
+    .typography-demo h2 {
+      /*![demo.headingColor]*/
+      color: #2d3748;
+      
+      /*![toPx(demo.h2Size)]*/
+      font-size: 28px;
+      
+      margin-bottom: 0.5rem;
+    }
+
+    .typography-demo h3 {
+      /*![demo.subheadingColor]*/
+      color: #4a5568;
+      
+      /*![toPx(demo.h3Size)]*/
+      font-size: 22px;
+      
+      margin-bottom: 0.5rem;
+    }
+
+    /* Alert Boxes */
+    .alert {
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      border-left: 4px solid;
+    }
+
+    .alert-info {
+      /*![opacify(demo.primaryButton, 0.1)]*/
+      background: rgba(102, 126, 234, 0.1);
+      
+      /*![demo.primaryButton]*/
+      border-color: #667eea;
+      
+      /*![tint(demo.primaryButton, #000000, 0.3)]*/
+      color: #4c51bf;
+    }
+
+    .alert-success {
+      /*![opacify(demo.secondaryButton, 0.1)]*/
+      background: rgba(72, 187, 120, 0.1);
+      
+      /*![demo.secondaryButton]*/
+      border-color: #48bb78;
+      
+      /*![tint(demo.secondaryButton, #000000, 0.3)]*/
+      color: #2f855a;
+    }
+
+    .alert-warning {
+      /*![opacify(demo.accentColor, 0.1)]*/
+      background: rgba(237, 137, 54, 0.1);
+      
+      /*![demo.accentColor]*/
+      border-color: #ed8936;
+      
+      /*![tint(demo.accentColor, #000000, 0.3)]*/
+      color: #c05621;
+    }
+
+    .alert-danger {
+      /*![opacify(demo.dangerColor, 0.1)]*/
+      background: rgba(245, 101, 101, 0.1);
+      
+      /*![demo.dangerColor]*/
+      border-color: #f56565;
+      
+      /*![tint(demo.dangerColor, #000000, 0.3)]*/
+      color: #c53030;
+    }
+
+    /* Footer */
+    .footer {
+      /*![demo.footerBackground]*/
+      background: #2d3748;
+      
+      /*![demo.footerText]*/
+      color: #a0aec0;
+      
+      padding: 3rem 2rem 2rem;
+      margin-top: 4rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .footer a {
+      /*![demo.accentColor]*/
+      color: #667eea;
+      
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        flex-basis: 100%;
+        justify-content: center;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-container">
+      <div class="logo">StyleShifter</div>
+      <ul class="nav-links">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#buttons">Buttons</a></li>
+        <li><a href="#colors">Colors</a></li>
+        <li><a href="#typography">Typography</a></li>
+        <li><a href="#components">Components</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>StyleShifter Interactive Demo</h1>
+    <p>Experience dynamic CSS theming with expression-based overrides. Switch themes in real-time and see how StyleShifter transforms your styles instantly.</p>
+  </div>
+
+  <!-- Theme Switcher -->
+  <div class="container">
+    <div class="theme-switcher">
+      <h2>🎨 Choose Your Theme</h2>
+      <div class="theme-buttons">
+        <button class="theme-btn" onclick="applyTheme('default')">
+          <span>✨</span> Default
+        </button>
+        <button class="theme-btn" onclick="applyTheme('dark')">
+          <span>🌙</span> Dark Mode
+        </button>
+        <button class="theme-btn" onclick="applyTheme('ocean')">
+          <span>🌊</span> Ocean
+        </button>
+        <button class="theme-btn" onclick="applyTheme('forest')">
+          <span>🌲</span> Forest
+        </button>
+        <button class="theme-btn" onclick="applyTheme('sunset')">
+          <span>🌅</span> Sunset
+        </button>
+        <button class="theme-btn" onclick="applyTheme('neon')">
+          <span>⚡</span> Neon
+        </button>
+        <button class="theme-btn" onclick="removeTheme()">
+          <span>🔄</span> Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Overview Section -->
+    <section id="overview" class="demo-section">
+      <h2>📘 How It Works</h2>
+      <p>
+        StyleShifter scans your CSS for special expression markers like <code>/*![demo.primaryColor]*/</code> 
+        and generates scoped overrides on-the-fly. No build process, no CSS preprocessors - just pure runtime magic.
+      </p>
+
+      <h3>Expression Syntax</h3>
+      <div class="code-block">/*![theme.propertyName]*/
+background-color: #defaultValue;
+
+/*![functionName(theme.property, args)]*/
+color: rgba(0, 0, 0, 1);</div>
+
+      <div class="demo-grid">
+        <div class="demo-card">
+          <h4>🎯 Direct Values</h4>
+          <p>Reference theme properties directly: <code>/*![demo.primaryColor]*/</code></p>
+        </div>
+        <div class="demo-card">
+          <h4>🔧 Functions</h4>
+          <p>Use built-in functions: <code>/*![opacify(demo.color, 0.5)]*/</code></p>
+        </div>
+        <div class="demo-card">
+          <h4>🔄 Dynamic</h4>
+          <p>Switch themes instantly without page reload or recompilation</p>
+        </div>
+        <div class="demo-card">
+          <h4>📦 Zero Build</h4>
+          <p>No webpack, no preprocessors - works in any browser environment</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Buttons Section -->
+    <section id="buttons" class="demo-section">
+      <h2>🔘 Button Styles</h2>
+      <p>Buttons automatically adapt to your theme colors using expression-based overrides.</p>
+
+      <h3>Primary & Secondary</h3>
+      <div class="button-group">
+        <button class="btn btn-primary">Primary Button</button>
+        <button class="btn btn-secondary">Secondary Button</button>
+        <button class="btn btn-outline">Outline Button</button>
+      </div>
+
+      <h3>CSS Example</h3>
+      <div class="code-block">.btn-primary {
+  /*![demo.primaryButton]*/
+  background: #667eea;
+  
+  /*![demo.primaryButtonText]*/
+  color: white;
+}
+
+.btn-primary:hover {
+  /*![tint(demo.primaryButton, #000000, 0.1)]*/
+  background: #5a67d8;
+}</div>
+    </section>
+
+    <!-- Colors Section -->
+    <section id="colors" class="demo-section">
+      <h2>🎨 Color Palette</h2>
+      <p>Theme colors are automatically applied across all components.</p>
+
+      <div class="color-palette">
+        <div class="color-swatch">
+          <div class="color-swatch-color swatch-primary">Primary</div>
+          <div class="color-swatch-label">demo.primaryButton</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-swatch-color swatch-secondary">Secondary</div>
+          <div class="color-swatch-label">demo.secondaryButton</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-swatch-color swatch-accent">Accent</div>
+          <div class="color-swatch-label">demo.accentColor</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-swatch-color swatch-danger">Danger</div>
+          <div class="color-swatch-label">demo.dangerColor</div>
+        </div>
+      </div>
+
+      <h3>Color Functions</h3>
+      <div class="code-block">/* Opacity */
+/*![opacify(demo.primaryButton, 0.5)]*/
+
+/* Tinting */
+/*![tint(demo.primaryButton, #ffffff, 0.2)]*/
+
+/* Inversion */
+/*![invert(demo.primaryButton)]*/</div>
+    </section>
+
+    <!-- Typography Section -->
+    <section id="typography" class="demo-section typography-demo">
+      <h2>📝 Typography</h2>
+      <p>Font sizes and colors are themeable using expressions.</p>
+
+      <h1>Heading 1 - Large Title</h1>
+      <h2>Heading 2 - Section Title</h2>
+      <h3>Heading 3 - Subsection</h3>
+      <p>Body text with themeable color and size properties for optimal readability across all themes.</p>
+
+      <h3>Size Conversion</h3>
+      <div class="code-block">h1 {
+  /*![toPx(demo.h1Size)]*/
+  font-size: 36px;
+}
+
+/* Convert to rem */
+/*![toRem(demo.h1Size, 16)]*/
+font-size: 2.25rem;</div>
+    </section>
+
+    <!-- Components Section -->
+    <section id="components" class="demo-section">
+      <h2>🧩 Components</h2>
+      <p>Complete components that respond to theme changes.</p>
+
+      <h3>Alert Messages</h3>
+      <div class="alert alert-info">
+        <strong>ℹ️ Info:</strong> This is an informational message using theme colors.
+      </div>
+      <div class="alert alert-success">
+        <strong>✅ Success:</strong> Operation completed successfully with theme-aware styling.
+      </div>
+      <div class="alert alert-warning">
+        <strong>⚠️ Warning:</strong> Please review this important notice.
+      </div>
+      <div class="alert alert-danger">
+        <strong>❌ Error:</strong> Something went wrong. Please try again.
+      </div>
+
+      <h3>Cards Grid</h3>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <h4>🚀 Fast</h4>
+          <p>Instant theme switching with no performance impact</p>
+        </div>
+        <div class="demo-card">
+          <h4>💡 Simple</h4>
+          <p>Intuitive expression syntax that's easy to learn</p>
+        </div>
+        <div class="demo-card">
+          <h4>🎯 Precise</h4>
+          <p>Fine-grained control over every style property</p>
+        </div>
+        <div class="demo-card">
+          <h4>🔌 Extensible</h4>
+          <p>Add your own custom functions and transformations</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p><strong>StyleShifter</strong> - Dynamic CSS Theming Made Easy</p>
+      <p>
+        <a href="https://github.com/BournazosHarry/StyleShifter" target="_blank">GitHub</a> · 
+        <a href="https://github.com/BournazosHarry/StyleShifter#readme" target="_blank">Documentation</a> · 
+        <a href="https://www.npmjs.com/package/style-shifter" target="_blank">npm</a>
+      </p>
+      <p style="margin-top: 1rem; opacity: 0.7;">MIT License © 2025</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    // Simplified theme implementation for demo
+    class SimpleTheme {
+      constructor(options) {
+        this.namespace = options.namespace;
+        this.name = options.name;
+        this.data = options.data;
+      }
+
+      applyTo(element) {
+        const classes = Array.from(element.classList);
+        classes.forEach(cls => {
+          if (cls.startsWith(this.namespace + '-')) {
+            element.classList.remove(cls);
+          }
+        });
+        element.classList.add(`${this.namespace}-${this.name}`);
+      }
+
+      removeFrom(element) {
+        element.classList.remove(`${this.namespace}-${this.name}`);
+      }
+    }
+
+    // Theme definitions
+    const themes = {
+      default: new SimpleTheme({
+        namespace: 'demo',
+        name: 'default',
+        data: {
+          navBackground: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          logoSize: 24,
+          heroBackground: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          heroTitleSize: 48,
+          heroTextSize: 20,
+          switcherBackground: '#ffffff',
+          cardBackground: '#ffffff',
+          headingColor: '#2d3748',
+          subheadingColor: '#4a5568',
+          textColor: '#718096',
+          cardHeadingColor: '#2d3748',
+          cardTextColor: '#718096',
+          buttonBackground: '#667eea',
+          buttonText: '#ffffff',
+          primaryButton: '#667eea',
+          primaryButtonText: '#ffffff',
+          secondaryButton: '#48bb78',
+          secondaryButtonText: '#ffffff',
+          accentColor: '#ed8936',
+          dangerColor: '#f56565',
+          textSize: 16,
+          subheadingSize: 20,
+          h1Size: 36,
+          h2Size: 28,
+          h3Size: 22,
+          codeBackground: '#1a202c',
+          codeText: '#e2e8f0',
+          demoCardBackground: '#f7fafc',
+          footerBackground: '#2d3748',
+          footerText: '#a0aec0'
+        }
+      }),
+
+      dark: new SimpleTheme({
+        namespace: 'demo',
+        name: 'dark',
+        data: {
+          navBackground: 'linear-gradient(135deg, #1a202c 0%, #2d3748 100%)',
+          logoSize: 24,
+          heroBackground: 'linear-gradient(135deg, #1a202c 0%, #2d3748 100%)',
+          heroTitleSize: 48,
+          heroTextSize: 20,
+          switcherBackground: '#2d3748',
+          cardBackground: '#2d3748',
+          headingColor: '#f7fafc',
+          subheadingColor: '#e2e8f0',
+          textColor: '#cbd5e0',
+          cardHeadingColor: '#f7fafc',
+          cardTextColor: '#cbd5e0',
+          buttonBackground: '#4299e1',
+          buttonText: '#ffffff',
+          primaryButton: '#4299e1',
+          primaryButtonText: '#ffffff',
+          secondaryButton: '#48bb78',
+          secondaryButtonText: '#ffffff',
+          accentColor: '#ed8936',
+          dangerColor: '#fc8181',
+          textSize: 16,
+          subheadingSize: 20,
+          h1Size: 36,
+          h2Size: 28,
+          h3Size: 22,
+          codeBackground: '#1a202c',
+          codeText: '#e2e8f0',
+          demoCardBackground: '#1a202c',
+          footerBackground: '#1a202c',
+          footerText: '#a0aec0'
+        }
+      }),
+
+      ocean: new SimpleTheme({
+        namespace: 'demo',
+        name: 'ocean',
+        data: {
+          navBackground: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
+          logoSize: 24,
+          heroBackground: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
+          heroTitleSize: 48,
+          heroTextSize: 20,
+          switcherBackground: '#ffffff',
+          cardBackground: '#ffffff',
+          headingColor: '#0c4a6e',
+          subheadingColor: '#075985',
+          textColor: '#0e7490',
+          cardHeadingColor: '#0c4a6e',
+          cardTextColor: '#0e7490',
+          buttonBackground: '#0ea5e9',
+          buttonText: '#ffffff',
+          primaryButton: '#0ea5e9',
+          primaryButtonText: '#ffffff',
+          secondaryButton: '#06b6d4',
+          secondaryButtonText: '#ffffff',
+          accentColor: '#f59e0b',
+          dangerColor: '#ef4444',
+          textSize: 16,
+          subheadingSize: 20,
+          h1Size: 36,
+          h2Size: 28,
+          h3Size: 22,
+          codeBackground: '#083344',
+          codeText: '#e0f2fe',
+          demoCardBackground: '#f0f9ff',
+          footerBackground: '#0c4a6e',
+          footerText: '#bae6fd'
+        }
+      }),
+
+      forest: new SimpleTheme({
+        namespace: 'demo',
+        name: 'forest',
+        data: {
+          navBackground: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+          logoSize: 24,
+          heroBackground: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+          heroTitleSize: 48,
+          heroTextSize: 20,
+          switcherBackground: '#ffffff',
+          cardBackground: '#ffffff',
+          headingColor: '#064e3b',
+          subheadingColor: '#065f46',
+          textColor: '#047857',
+          cardHeadingColor: '#064e3b',
+          cardTextColor: '#047857',
+          buttonBackground: '#059669',
+          buttonText: '#ffffff',
+          primaryButton: '#059669',
+          primaryButtonText: '#ffffff',
+          secondaryButton: '#10b981',
+          secondaryButtonText: '#ffffff',
+          accentColor: '#f59e0b',
+          dangerColor: '#ef4444',
+          textSize: 16,
+          subheadingSize: 20,
+          h1Size: 36,
+          h2Size: 28,
+          h3Size: 22,
+          codeBackground: '#022c22',
+          codeText: '#d1fae5',
+          demoCardBackground: '#f0fdf4',
+          footerBackground: '#064e3b',
+          footerText: '#a7f3d0'
+        }
+      }),
+
+      sunset: new SimpleTheme({
+        namespace: 'demo',
+        name: 'sunset',
+        data: {
+          navBackground: 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)',
+          logoSize: 24,
+          heroBackground: 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)',
+          heroTitleSize: 48,
+          heroTextSize: 20,
+          switcherBackground: '#ffffff',
+          cardBackground: '#ffffff',
+          headingColor: '#7c2d12',
+          subheadingColor: '#9a3412',
+          textColor: '#c2410c',
+          cardHeadingColor: '#7c2d12',
+          cardTextColor: '#c2410c',
+          buttonBackground: '#f97316',
+          buttonText: '#ffffff',
+          primaryButton: '#f97316',
+          primaryButtonText: '#ffffff',
+          secondaryButton: '#fb923c',
+          secondaryButtonText: '#ffffff',
+          accentColor: '#ec4899',
+          dangerColor: '#ef4444',
+          textSize: 16,
+          subheadingSize: 20,
+          h1Size: 36,
+          h2Size: 28,
+          h3Size: 22,
+          codeBackground: '#431407',
+          codeText: '#fed7aa',
+          demoCardBackground: '#fff7ed',
+          footerBackground: '#7c2d12',
+          footerText: '#fed7aa'
+        }
+      }),
+
+      neon: new SimpleTheme({
+        namespace: 'demo',
+        name: 'neon',
+        data: {
+          navBackground: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
+          logoSize: 24,
+          heroBackground: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
+          heroTitleSize: 48,
+          heroTextSize: 20,
+          switcherBackground: '#1a1625',
+          cardBackground: '#1a1625',
+          headingColor: '#f5f3ff',
+          subheadingColor: '#e9d5ff',
+          textColor: '#d8b4fe',
+          cardHeadingColor: '#f5f3ff',
+          cardTextColor: '#d8b4fe',
+          buttonBackground: '#8b5cf6',
+          buttonText: '#ffffff',
+          primaryButton: '#8b5cf6',
+          primaryButtonText: '#ffffff',
+          secondaryButton: '#ec4899',
+          secondaryButtonText: '#ffffff',
+          accentColor: '#06b6d4',
+          dangerColor: '#f43f5e',
+          textSize: 16,
+          subheadingSize: 20,
+          h1Size: 36,
+          h2Size: 28,
+          h3Size: 22,
+          codeBackground: '#0f0a1a',
+          codeText: '#f5f3ff',
+          demoCardBackground: '#2e1065',
+          footerBackground: '#0f0a1a',
+          footerText: '#c4b5fd'
+        }
+      })
+    };
+
+    let currentTheme = null;
+
+    window.applyTheme = function(themeName) {
+      const theme = themes[themeName];
+      if (theme) {
+        if (currentTheme) {
+          currentTheme.removeFrom(document.body);
+        }
+        theme.applyTo(document.body);
+        currentTheme = theme;
+        injectThemeStyles(theme);
+        
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        event.target.closest('.theme-btn').classList.add('active');
+      }
+    };
+
+    window.removeTheme = function() {
+      if (currentTheme) {
+        currentTheme.removeFrom(document.body);
+        currentTheme = null;
+        
+        const styleEl = document.getElementById('theme-overrides');
+        if (styleEl) styleEl.remove();
+        
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+      }
+    };
+
+    function injectThemeStyles(theme) {
+      const css = generateThemeCSS(theme);
+      let styleEl = document.getElementById('theme-overrides');
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'theme-overrides';
+        document.head.appendChild(styleEl);
+      }
+      styleEl.innerHTML = css;
+    }
+
+    function generateThemeCSS(theme) {
+      const d = theme.data;
+      const cn = `.${theme.namespace}-${theme.name}`;
+      
+      return `
+        ${cn} .nav { background: ${d.navBackground}; }
+        ${cn} .logo { font-size: ${d.logoSize}px; }
+        ${cn} .nav-links a:hover { background: rgba(255, 255, 255, 0.2); }
+        ${cn} .hero { background: ${d.heroBackground}; }
+        ${cn} .hero h1 { font-size: ${d.heroTitleSize}px; }
+        ${cn} .hero p { font-size: ${d.heroTextSize}px; }
+        ${cn} .theme-switcher { background: ${d.switcherBackground}; }
+        ${cn} .theme-switcher h2 { color: ${d.headingColor}; }
+        ${cn} .theme-btn { background: ${d.buttonBackground}; color: ${d.buttonText}; }
+        ${cn} .theme-btn:hover { background: ${d.buttonBackground}dd; }
+        ${cn} .theme-btn.active { background: ${d.accentColor}; }
+        ${cn} .demo-section { background: ${d.cardBackground}; }
+        ${cn} .demo-section h2 { color: ${d.headingColor}; }
+        ${cn} .demo-section h3 { color: ${d.subheadingColor}; font-size: ${d.subheadingSize}px; }
+        ${cn} .demo-section p { color: ${d.textColor}; font-size: ${d.textSize}px; }
+        ${cn} .code-block { background: ${d.codeBackground}; color: ${d.codeText}; }
+        ${cn} .demo-card { background: ${d.demoCardBackground}; }
+        ${cn} .demo-card:hover { border-color: ${d.accentColor}; }
+        ${cn} .demo-card h4 { color: ${d.cardHeadingColor}; }
+        ${cn} .demo-card p { color: ${d.cardTextColor}; }
+        ${cn} .btn-primary { background: ${d.primaryButton}; color: ${d.primaryButtonText}; }
+        ${cn} .btn-secondary { background: ${d.secondaryButton}; color: ${d.secondaryButtonText}; }
+        ${cn} .btn-outline { background: transparent; border: 2px solid ${d.primaryButton}; color: ${d.primaryButton}; }
+        ${cn} .btn-outline:hover { background: ${d.primaryButton}; color: white; }
+        ${cn} .swatch-primary { background: ${d.primaryButton}; }
+        ${cn} .swatch-secondary { background: ${d.secondaryButton}; }
+        ${cn} .swatch-accent { background: ${d.accentColor}; }
+        ${cn} .swatch-danger { background: ${d.dangerColor}; }
+        ${cn} .color-swatch-label { background: ${d.cardBackground}; color: ${d.textColor}; }
+        ${cn} .typography-demo h1 { color: ${d.headingColor}; font-size: ${d.h1Size}px; }
+        ${cn} .typography-demo h2 { color: ${d.headingColor}; font-size: ${d.h2Size}px; }
+        ${cn} .typography-demo h3 { color: ${d.subheadingColor}; font-size: ${d.h3Size}px; }
+        ${cn} .alert-info { background: ${d.primaryButton}1a; border-color: ${d.primaryButton}; color: ${d.primaryButton}; }
+        ${cn} .alert-success { background: ${d.secondaryButton}1a; border-color: ${d.secondaryButton}; color: ${d.secondaryButton}; }
+        ${cn} .alert-warning { background: ${d.accentColor}1a; border-color: ${d.accentColor}; color: ${d.accentColor}; }
+        ${cn} .alert-danger { background: ${d.dangerColor}1a; border-color: ${d.dangerColor}; color: ${d.dangerColor}; }
+        ${cn} .footer { background: ${d.footerBackground}; color: ${d.footerText}; }
+        ${cn} .footer a { color: ${d.accentColor}; }
+      `;
+    }
+
+    // Smooth scroll for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    console.log('🎨 StyleShifter Demo loaded! Try switching themes above.');
+  </script>
+</body>
+</html>
