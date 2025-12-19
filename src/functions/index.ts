@@ -2,8 +2,9 @@
  * Built-in API functions for CSS expression evaluation
  */
 
-import { APIFunction } from '../types';
-import { ColorUtils } from '../utils';
+import { APIFunction } from '../types.js';
+import { ColorUtils } from '../utils.js';
+import { mapSvgColors } from './mapSvgColors.js';
 
 /**
  * Wrap a URL inside a 'url()' string to provide a valid CSS value
@@ -165,3 +166,6 @@ export const printf: APIFunction = (expression, theme, src, parserPos, args) => 
   
   return result;
 };
+
+// Export all functions
+export { mapSvgColors };

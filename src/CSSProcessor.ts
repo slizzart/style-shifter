@@ -2,9 +2,9 @@
  * CSSProcessor - Parses CSS for theme expressions and generates overrides
  */
 
-import { Theme } from './Theme';
-import { APIFunction, RuleOverride, RuleInfo, FunctionInfo, OverrideProcessor, CSSProcessorOptions } from './types';
-import * as builtInFunctions from './functions';
+import { Theme } from './Theme.js';
+import { APIFunction, RuleOverride, RuleInfo, FunctionInfo, OverrideProcessor, CSSProcessorOptions } from './types.js';
+import * as builtInFunctions from './functions/index.js';
 
 export class CSSProcessor {
   private namespace: string;
@@ -36,6 +36,7 @@ export class CSSProcessor {
     this.registerFunction('tint', builtInFunctions.tint);
     this.registerFunction('invert', builtInFunctions.invert);
     this.registerFunction('printf', builtInFunctions.printf);
+    this.registerFunction('mapSvgColors', builtInFunctions.mapSvgColors);
     
     // Register variable accessors
     this.registerFunction('local', this.local.bind(this));

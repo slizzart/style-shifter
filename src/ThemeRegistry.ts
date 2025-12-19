@@ -2,7 +2,7 @@
  * ThemeRegistry - Manages theme cascading and inheritance
  */
 
-import { ThemeData } from './types';
+import { ThemeData } from './types.js';
 
 export class ThemeRegistry {
   private static cascades: Map<string, Array<ThemeData>> = new Map();

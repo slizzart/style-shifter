@@ -2,7 +2,7 @@
  * Core Theme class
  */
 
-import { ThemeData, ThemeOptions } from './types';
+import { ThemeData, ThemeOptions } from './types.js';
 
 export class Theme {
   public namespace: string;
