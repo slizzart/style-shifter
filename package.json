@@ -1,5 +1,5 @@
 {
-  "name": "style-shifter",
+  "name": "@slizzart/style-shifter",
   "version": "1.0.0",
   "description": "Dynamic CSS theming system with expression-based style overrides",
   "type": "module",
@@ -27,10 +27,26 @@
     "theming",
     "dynamic-styles",
     "css-in-js",
-    "style-overrides"
+    "style-overrides",
+    "runtime-theming",
+    "stylesheet",
+    "typescript",
+    "browser",
+    "expressions"
   ],
-  "author": "",
+  "author": "Harry Bournazos",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BournazosHarry/StyleShifter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BournazosHarry/StyleShifter/issues"
+  },
+  "homepage": "https://github.com/BournazosHarry/StyleShifter#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "devDependencies": {
     "@vitest/ui": "^1.0.4",
     "@vitest/coverage-v8": "^1.0.4",
