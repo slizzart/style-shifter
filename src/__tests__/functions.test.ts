@@ -232,4 +232,82 @@ describe('Built-in API Functions', () => {
       expect(result).toContain('first');
     });
   });
+
+  describe('mapSvgColors', () => {
+    const simpleSvg = '<svg><circle fill="#FF0000"/><rect fill="#00FF00"/></svg>';
+
+    it('should replace single color in SVG', () => {
+      const result = funcs.mapSvgColors('', mockTheme, '', 0, [
+        simpleSvg,
+        '#FF0000',
+        '#0000FF'
+      ]);
+      expect(result).toContain('data:image/svg+xml;base64,');
+      // Decode and check
+      const decoded = atob(result!.split(',')[1]);
+      expect(decoded).toContain('#0000FF');
+      expect(decoded).not.toContain('#FF0000');
+    });
+
+    it('should replace multiple colors', () => {
+      const result = funcs.mapSvgColors('', mockTheme, '', 0, [
+        simpleSvg,
+        '#FF0000|#00FF00',
+        '#111111',
+        '#222222'
+      ]);
+      const decoded = atob(result!.split(',')[1]);
+      expect(decoded).toContain('#111111');
+      expect(decoded).toContain('#222222');
+      expect(decoded).not.toContain('#FF0000');
+      expect(decoded).not.toContain('#00FF00');
+    });
+
+    it('should handle colors without # prefix in original list', () => {
+      const result = funcs.mapSvgColors('', mockTheme, '', 0, [
+        simpleSvg,
+        'FF0000',
+        '#AAAAAA'
+      ]);
+      const decoded = atob(result!.split(',')[1]);
+      expect(decoded).toContain('#AAAAAA');
+    });
+
+    it('should be case-insensitive', () => {
+      const svgLowerCase = '<svg><circle fill="#ff0000"/></svg>';
+      const result = funcs.mapSvgColors('', mockTheme, '', 0, [
+        svgLowerCase,
+        '#FF0000',
+        '#ABCDEF'
+      ]);
+      const decoded = atob(result!.split(',')[1]);
+      expect(decoded).toContain('#ABCDEF');
+    });
+
+    it('should return null for invalid inputs', () => {
+      expect(funcs.mapSvgColors('', mockTheme, '', 0, [])).toBeNull();
+      expect(funcs.mapSvgColors('', mockTheme, '', 0, [simpleSvg])).toBeNull();
+      expect(funcs.mapSvgColors('', mockTheme, '', 0, [null, '#FF0000', '#000'])).toBeNull();
+    });
+
+    it('should return null when color counts mismatch', () => {
+      const result = funcs.mapSvgColors('', mockTheme, '', 0, [
+        simpleSvg,
+        '#FF0000|#00FF00',
+        '#111111' // Only one replacement for two originals
+      ]);
+      expect(result).toBeNull();
+    });
+
+    it('should generate valid base64 data URI', () => {
+      const result = funcs.mapSvgColors('', mockTheme, '', 0, [
+        simpleSvg,
+        '#FF0000',
+        '#000000'
+      ]);
+      expect(result).toMatch(/^data:image\/svg\+xml;base64,/);
+      // Should be valid base64
+      expect(() => atob(result!.split(',')[1])).not.toThrow();
+    });
+  });
 });

@@ -4,6 +4,7 @@
 
 import { APIFunction } from '../types';
 import { ColorUtils } from '../utils';
+import { mapSvgColors } from './mapSvgColors';
 
 /**
  * Wrap a URL inside a 'url()' string to provide a valid CSS value
@@ -165,3 +166,6 @@ export const printf: APIFunction = (expression, theme, src, parserPos, args) => 
   
   return result;
 };
+
+// Export all functions
+export { mapSvgColors };

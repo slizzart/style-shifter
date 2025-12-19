@@ -38,12 +38,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BournazosHarry/StyleShifter.git"
+    "url": "git+https://github.com/slizzart/style-shifter.git"
   },
   "bugs": {
-    "url": "https://github.com/BournazosHarry/StyleShifter/issues"
+    "url": "https://github.com/slizzart/style-shifter/issues"
   },
-  "homepage": "https://github.com/BournazosHarry/StyleShifter#readme",
+  "homepage": "https://github.com/slizzart/style-shifter#readme",
   "engines": {
     "node": ">=16.0.0"
   },

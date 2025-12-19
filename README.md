@@ -2,7 +2,7 @@
 
 A lean, powerful TypeScript library for dynamic CSS theming with expression-based style overrides.
 
-## 🚀 <a href="https://bournazosharry.github.io/StyleShifter/"><strong>Live Interactive Demo</strong></a>
+## 🚀 <a href="https://slizzart.github.io/style-shifter/" target="_blank"><strong>Live Interactive Demo</strong></a>
 
 Experience StyleShifter in action! Switch between 6 different themes and see real-time CSS transformations.
 
@@ -18,7 +18,7 @@ Experience StyleShifter in action! Switch between 6 different themes and see rea
 ## Installation
 
 ```bash
-npm install style-shifter
+npm install @slizzart/style-shifter
 ```
 
 ## Quick Start
@@ -26,7 +26,7 @@ npm install style-shifter
 ### 1. Create a Theme
 
 ```typescript
-import { Theme, CSSProcessor } from 'style-shifter';
+import { Theme, CSSProcessor } from '@slizzart/style-shifter';
 
 const darkTheme = new Theme({
   namespace: 'myapp',
@@ -144,6 +144,17 @@ String formatting with placeholders.
 border: 2px solid #ccc;
 ```
 
+### `mapSvgColors(svgContent, originalColors, ...themeColors)`
+Maps SVG colors to theme colors and returns a base64 data URI.
+
+```css
+/* Original colors separated by | */
+/*![mapSvgColors('<svg>...</svg>', '#FF0000|#00FF00|#0000FF', myapp.primary, myapp.secondary, myapp.accent)]*/
+background-image: url('data:image/svg+xml;base64,...');
+```
+
+This function replaces specified colors in an inline SVG string and encodes it as a data URI, perfect for dynamically theming icon colors.
+
 ### `local(varName, value?)`
 Get or set a local variable (scoped to this processor instance).
 
@@ -164,7 +175,7 @@ Modify where the theme class is attached in the selector.
 You can extend the API with your own functions:
 
 ```typescript
-import { CSSProcessor, APIFunction } from 'style-shifter';
+import { CSSProcessor, APIFunction } from '@slizzart/style-shifter';
 
 const processor = new CSSProcessor({ namespace: 'myapp' });
 
@@ -194,7 +205,7 @@ Then use it in CSS:
 Use `ThemeRegistry` to set up inheritance:
 
 ```typescript
-import { ThemeRegistry } from 'style-shifter';
+import { ThemeRegistry } from '@slizzart/style-shifter';
 
 // Register base defaults
 ThemeRegistry.registerCascade('myapp', {
@@ -282,7 +293,7 @@ theme.onComplete(() => {
 Full type definitions are included:
 
 ```typescript
-import type { ThemeData, ThemeOptions, APIFunction } from 'style-shifter';
+import type { ThemeData, ThemeOptions, APIFunction } from '@slizzart/style-shifter';
 
 const myThemeData: ThemeData = {
   color: '#fff',

@@ -36,6 +36,7 @@ export class CSSProcessor {
     this.registerFunction('tint', builtInFunctions.tint);
     this.registerFunction('invert', builtInFunctions.invert);
     this.registerFunction('printf', builtInFunctions.printf);
+    this.registerFunction('mapSvgColors', builtInFunctions.mapSvgColors);
     
     // Register variable accessors
     this.registerFunction('local', this.local.bind(this));

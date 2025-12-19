@@ -417,6 +417,37 @@
       margin-bottom: 0.5rem;
     }
 
+    /* SVG Demo */
+    .svg-demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .svg-demo-item {
+      text-align: center;
+    }
+
+    .svg-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1rem;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .original-svg {
+      background-image: url('assets/demo-icon.svg');
+    }
+
+    .themed-svg {
+      /* This would use mapSvgColors in a real implementation */
+      background-image: url('assets/demo-icon.svg');
+      /* Placeholder - actual theme mapping would happen via StyleShifter */
+    }
+
     /* Alert Boxes */
     .alert {
       padding: 1rem 1.5rem;
@@ -725,6 +756,30 @@ font-size: 2.25rem;</div>
           <p>Add your own custom functions and transformations</p>
         </div>
       </div>
+
+      <h3>SVG Color Mapping</h3>
+      <p>Dynamically recolor SVG icons to match your theme using the <code>mapSvgColors</code> function.</p>
+      
+      <div class="svg-demo-grid">
+        <div class="svg-demo-item">
+          <div class="svg-icon original-svg"></div>
+          <p>Original SVG<br><small>Red, Green, Blue, Yellow</small></p>
+        </div>
+        <div class="svg-demo-item">
+          <div class="svg-icon themed-svg"></div>
+          <p>Themed SVG<br><small>Maps to theme colors</small></p>
+        </div>
+      </div>
+
+      <div class="code-block">&lt;!-- Inline SVG as data --&gt;
+&lt;script&gt;
+const svgData = '&lt;svg...&gt;...&lt;/svg&gt;';
+&lt;/script&gt;
+
+.themed-icon {
+  /*![mapSvgColors(svgData, '#FF0000|#00FF00|#0000FF', theme.primary, theme.secondary, theme.accent)]*/
+  background-image: url('icon.svg');
+}</div>
     </section>
   </div>
 
@@ -733,9 +788,9 @@ font-size: 2.25rem;</div>
     <div class="footer-content">
       <p><strong>StyleShifter</strong> - Dynamic CSS Theming Made Easy</p>
       <p>
-        <a href="https://github.com/BournazosHarry/StyleShifter" target="_blank">GitHub</a> · 
-        <a href="https://github.com/BournazosHarry/StyleShifter#readme" target="_blank">Documentation</a> · 
-        <a href="https://www.npmjs.com/package/style-shifter" target="_blank">npm</a>
+        <a href="https://github.com/slizzart/style-shifter" target="_blank">GitHub</a> · 
+        <a href="https://github.com/slizzart/style-shifter#readme" target="_blank">Documentation</a> · 
+        <a href="https://www.npmjs.com/package/@slizzart/style-shifter" target="_blank">npm</a>
       </p>
       <p style="margin-top: 1rem; opacity: 0.7;">MIT License © 2025</p>
     </div>
