@@ -71,6 +71,23 @@ export class CSSProcessor {
         } catch (e) {
           // Silently ignore CORS errors or other issues
         }
+      } else if (sheet.ownerNode && 'tagName' in sheet.ownerNode && sheet.ownerNode.tagName === 'STYLE') {
+        // Process inline stylesheets
+        const styleElement = sheet.ownerNode as HTMLStyleElement;
+        const cssText = styleElement.textContent || '';
+        if (cssText.trim()) {
+          this.parseCSSContentForTheme(cssText, theme);
+        }
+      }
+    }
+
+    // Also check for style elements that might not be in document.styleSheets yet
+    const styleElements = document.querySelectorAll('style');
+    for (let i = 0; i < styleElements.length; i++) {
+      const styleEl = styleElements[i] as HTMLStyleElement;
+      const cssText = styleEl.textContent || '';
+      if (cssText.trim()) {
+        this.parseCSSContentForTheme(cssText, theme);
       }
     }
 
@@ -101,6 +118,13 @@ export class CSSProcessor {
       return;
     }
 
+    this.parseCSSContentForTheme(src, theme);
+  }
+
+  /**
+   * Parse CSS content and extract theme overrides
+   */
+  private parseCSSContentForTheme(src: string, theme: Theme): void {
     // Parse expressions in format /*![expression]*/
     let idx1 = src.indexOf('/*![');
     let idx2: number;
@@ -117,38 +141,58 @@ export class CSSProcessor {
         const ruleInfo = this.getRuleInfo(src, idx1, theme);
         
         if (ruleInfo.prop && ruleInfo.name) {
-          let ruleName = this.ruleNameOverrides.get(theme.name)?.get(ruleInfo.name) 
-            || this.formatRuleSelector(ruleInfo.name, theme);
-          
-          const override: RuleOverride = {
-            name: ruleName,
-            prop: ruleInfo.prop,
-            value: val,
-            key: key,
-            important: ruleInfo.important
-          };
+          // Find the colon for this property
+          const colonPos = src.lastIndexOf(':', idx1);
+          if (colonPos !== -1) {
+            // Find the end of this property value
+            let valueEnd = src.indexOf(';', colonPos);
+            const closingBrace = src.indexOf('}', colonPos);
+            if (valueEnd === -1 || (closingBrace !== -1 && closingBrace < valueEnd)) {
+              valueEnd = closingBrace;
+            }
+            
+            if (valueEnd !== -1) {
+              const fullValue = src.substring(colonPos + 1, valueEnd).trim();
+              // Replace the expression (including /*![...]*/) with the new value
+              const exprStart = src.lastIndexOf('/*![', idx2);
+              const exprEnd = src.indexOf(']*/', idx2) + 3;
+              const exprWithFallback = src.substring(exprStart, exprEnd);
+              const replacementValue = fullValue.replace(exprWithFallback, val);
+              
+              let ruleName = this.ruleNameOverrides.get(theme.name)?.get(ruleInfo.name) 
+                || this.formatRuleSelector(ruleInfo.name, theme);
+              
+              const override: RuleOverride = {
+                name: ruleName,
+                prop: ruleInfo.prop,
+                value: replacementValue,
+                key: key,
+                important: ruleInfo.important
+              };
 
-          // Apply preprocessors
-          for (const processor of this.preprocessors) {
-            const result = processor(theme, override);
-            if (result !== null) {
-              override.value = result;
+              // Apply preprocessors
+              for (const processor of this.preprocessors) {
+                const result = processor(theme, override);
+                if (result !== null) {
+                  override.value = result;
+                }
+              }
+
+              // Apply postprocessors
+              for (const processor of this.postprocessors) {
+                const result = processor(theme, override);
+                if (result !== null) {
+                  override.value = result;
+                }
+              }
+
+              if (!this.overrides.has(ruleName)) {
+                this.overrides.set(ruleName, []);
+              }
+              
+              this.overrides.get(ruleName)!.push(override);
             }
           }
-
-          // Apply postprocessors
-          for (const processor of this.postprocessors) {
-            const result = processor(theme, override);
-            if (result !== null) {
-              override.value = result;
-            }
-          }
-
-          if (!this.overrides.has(ruleName)) {
-            this.overrides.set(ruleName, []);
-          }
-          
-          this.overrides.get(ruleName)!.push(override);
         }
       }
 
@@ -205,19 +249,40 @@ export class CSSProcessor {
       important: false
     };
 
-    const propStart = src.indexOf(']*/', index) + 3;
-    const propEnd = src.indexOf(':', propStart);
+    // Find the start of the expression
+    const exprStart = src.lastIndexOf('/*![', index);
+    if (exprStart === -1) return result;
 
-    result.prop = this.removeWhiteSpace(src.substring(propStart, propEnd));
+    // Look backwards from the expression to find the property name
+    let propEnd = exprStart;
+    while (propEnd > 0 && src.charAt(propEnd - 1) !== ':') {
+      propEnd--;
+    }
+    if (propEnd === 0) return result;
 
-    const valRegex = /:(.+?)(;|\})/;
-    const match = valRegex.exec(src.substr(propEnd, 100));
-    result.important = match ? match[1].indexOf('!important') !== -1 : false;
+    let propStart = propEnd;
+    while (propStart > 0 && !/\s/.test(src.charAt(propStart - 1)) && src.charAt(propStart - 1) !== '{') {
+      propStart--;
+    }
 
-    let i = propStart;
+    result.prop = this.removeWhiteSpace(src.substring(propStart, propEnd - 1));
 
-    if (result.prop) {
-      i = src.lastIndexOf('{', i);
+    // Check for !important in the value
+    const exprEnd = src.indexOf(']', exprStart) + 1;
+    const valueEnd = src.indexOf(';', exprEnd);
+    const closingBrace = src.indexOf('}', exprEnd);
+    const actualEnd = (valueEnd !== -1 && valueEnd < closingBrace) ? valueEnd : closingBrace;
+    if (actualEnd !== -1) {
+      const valuePart = src.substring(exprEnd, actualEnd);
+      result.important = valuePart.indexOf('!important') !== -1;
+    }
+
+    // Find the rule name by looking for the opening brace
+    let i = exprStart;
+    while (i >= 0 && src.charAt(i) !== '{') {
+      i--;
+    }
+    if (i >= 0) {
       const nameEnd = i;
       const delims = ['}', '/', '@'];
       
