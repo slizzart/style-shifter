@@ -360,38 +360,6 @@ describe('CSSProcessor', () => {
         data: { primaryColor: '#ff0000' }
       });
 
-      // Mock the parseStyleSheetFromUrlForTheme to use our inline CSS
-      const originalMethod = (processor as any).parseStyleSheetFromUrlForTheme;
-      (processor as any).parseStyleSheetFromUrlForTheme = function(url: string, theme: Theme) {
-        const src = style.innerHTML;
-        
-        let idx1 = src.indexOf('/*![');
-        while (idx1 !== -1) {
-          const idx2 = src.indexOf(']', idx1);
-          const expression = src.substring(idx1 + 4, idx2);
-          const val = this.evaluateExpression(expression, theme, src, idx1);
-          
-          if (val !== null) {
-            const ruleInfo = this.getRuleInfo(src, idx1, theme);
-            const ruleName = this.formatRuleSelector(ruleInfo.name, theme);
-            
-            if (!this.overrides.has(ruleName)) {
-              this.overrides.set(ruleName, []);
-            }
-            
-            this.overrides.get(ruleName).push({
-              name: ruleName,
-              prop: ruleInfo.prop,
-              value: val,
-              key: expression.split('.').pop(),
-              important: ruleInfo.important
-            });
-          }
-          
-          idx1 = src.indexOf('/*![', idx2 + 1);
-        }
-      };
-
       processor.addTheme(theme);
 
       // Check if style was injected
@@ -400,7 +368,55 @@ describe('CSSProcessor', () => {
 
       // Clean up
       style.remove();
-      (processor as any).parseStyleSheetFromUrlForTheme = originalMethod;
+    });
+
+    it('should handle minified CSS without trailing semicolons', () => {
+      const style = document.createElement('style');
+      style.innerHTML = `
+        .button{background-color:/*![test.primaryColor]*/#000;color:#fff}
+      `;
+      document.head.appendChild(style);
+
+      const theme = new Theme({
+        namespace: 'test',
+        name: 'minified',
+        data: { primaryColor: '#ff0000' }
+      });
+
+      processor.addTheme(theme);
+
+      // Check if style was injected
+      const injectedStyle = document.getElementById('style-shifter-test');
+      expect(injectedStyle).toBeDefined();
+      expect(injectedStyle?.textContent).toContain('background-color: #ff0000');
+
+      // Clean up
+      style.remove();
+    });
+
+    it('should handle minified CSS with multiple declarations ending with closing brace', () => {
+      const style = document.createElement('style');
+      style.innerHTML = `
+        .card{border:1px solid /*![test.borderColor]*/#ccc;border-radius:/*![test.radius]*/4px}
+      `;
+      document.head.appendChild(style);
+
+      const theme = new Theme({
+        namespace: 'test',
+        name: 'minified-multi',
+        data: { borderColor: '#ff6b6b', radius: '8px' }
+      });
+
+      processor.addTheme(theme);
+
+      // Check if style was injected
+      const injectedStyle = document.getElementById('style-shifter-test');
+      expect(injectedStyle).toBeDefined();
+      expect(injectedStyle?.textContent).toContain('border: 1px solid #ff6b6b');
+      expect(injectedStyle?.textContent).toContain('border-radius: 8px');
+
+      // Clean up
+      style.remove();
     });
   });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@slizzart/style-shifter",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Dynamic CSS theming system with expression-based style overrides",
   "type": "module",
   "main": "dist/index.js",
